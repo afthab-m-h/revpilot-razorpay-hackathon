@@ -223,8 +223,9 @@ def run_agent(db: Session, *, agent_type: str, user_message: str,
     if gemini_usage.should_skip():
         trace.add("Gemini rate limit active — using deterministic fallback")
         fb_reply, tools_used = _fallback_flow(db, agent_type, user_message, trace)
-        reply = ("The AI assistant is rate-limited right now, so here's a quick "
-                 "data-driven answer instead:\n\n" + fb_reply)
+        reply = ("AI temporarily unavailable. Gemini's free-tier limit has been "
+                 "reached. Here's a data-driven recommendation from the merchant "
+                 "catalog instead.\n\n" + fb_reply)
         _persist_run(db, session_id, agent_type, user_message, reply, tools_used, trace)
         return {"session_id": session_id, "reply": reply,
                 "trace": trace.steps, "rate_limited": True}
@@ -288,8 +289,9 @@ def run_agent(db: Session, *, agent_type: str, user_message: str,
             rate_limited = True
             trace.add("Gemini rate limit hit — switching to deterministic fallback")
             fb_reply, _fb_tools = _fallback_flow(db, agent_type, user_message, trace)
-            reply = ("The AI assistant has hit its usage limit, so here's a quick "
-                     "data-driven answer instead:\n\n" + fb_reply)
+            reply = ("AI temporarily unavailable. Gemini's free-tier limit has been "
+                     "reached. Here's a data-driven recommendation from the merchant "
+                     "catalog instead.\n\n" + fb_reply)
         else:
             reply = (f"The AI assistant is temporarily unavailable ({type_name}). "
                      f"You can still browse and buy normally.")

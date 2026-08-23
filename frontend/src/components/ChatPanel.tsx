@@ -25,23 +25,29 @@ function UsageIndicator({ usage }: { usage: GeminiUsage | null }) {
 
   if (!usage?.visible) return null
 
+  const calls = usage.requests_used ?? 0
+  const plural = calls === 1 ? '' : 'S'
   let text: string
-  if (usage.requests_limit != null) {
-    text = `AI usage: ${usage.requests_used}/${usage.requests_limit}`
-    if (usage.limited) {
-      text += remainingSecs && remainingSecs > 0
-        ? ` · resets in ${remainingSecs}s`
-        : ' · Rate limit active'
-    }
+  if (usage.limited && usage.requests_limit != null) {
+    // Server confirmed the window quota is exhausted — show quota state,
+    // NOT local call count (local calls != server bucket).
+    text = `AI QUOTA · ${usage.requests_limit}/${usage.requests_limit} · RATE LIMITED`
+  } else if (usage.requests_limit != null) {
+    text = `AI USAGE · ${calls} CALL${plural} THIS WINDOW · QUOTA ${usage.requests_limit}/MIN`
   } else {
-    text = 'Rate limit active'
+    // Local count only; server quota unknown.
+    text = `AI USAGE · ${calls} CALL${plural} THIS SESSION`
   }
+
+  // Accurate countdown only when the provider actually gave a retry delay.
+  const retry =
+    usage.limited && remainingSecs !== null && remainingSecs > 0 ? ` · RETRY IN ${remainingSecs}s` : ''
 
   return (
     <p className={`px-5 py-2 border-t border-line font-mono text-[10px] uppercase tracking-[0.16em] ${
       usage.limited ? 'text-accent' : 'text-inkMute'
     }`}>
-      {text}
+      {text}{retry}
     </p>
   )
 }

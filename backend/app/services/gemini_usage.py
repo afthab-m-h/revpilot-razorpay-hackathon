@@ -100,17 +100,19 @@ class GeminiUsageTracker:
                 reset_in = max(round(self._limited_until - time.monotonic(), 1), 0)
 
             limit_known = self._limit is not None
-            remaining = max(self._limit - self._used, 0) if limit_known else None
 
-            # Only expose a counter when it is reliable: we know the cap, or we
-            # are currently in a confirmed rate-limited state.
-            visible = limit_known or limited
+            # Show the indicator once we have anything meaningful to say: any
+            # local request activity, a learned server cap, or an active limit.
+            visible = limit_known or limited or self._used > 0
 
             out: dict = {
                 "visible": visible,
-                "requests_used": self._used if visible else None,
+                # LOCAL count of calls this app instance made in the current
+                # window. This is NOT the server's remaining quota.
+                "requests_used": self._used,
                 "requests_limit": self._limit,
-                "requests_remaining": remaining,
+                # Intentionally NO remaining/quota-left field: the server bucket
+                # may be exhausted by other clients sharing this key.
                 "limited": limited,
                 "reset_in_seconds": reset_in,
             }

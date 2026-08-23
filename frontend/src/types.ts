@@ -114,10 +114,12 @@ export interface AgentRun {
 
 export interface GeminiUsage {
   visible: boolean
+  /** Local count of calls this app instance made in the current window. */
   requests_used: number | null
+  /** Server-confirmed per-window cap (only known after a 429). */
   requests_limit: number | null
-  requests_remaining: number | null
   limited: boolean
+  /** Present ONLY when the provider reported a retry delay. */
   reset_in_seconds: number | null
   reset_at: number | null
   model_configured?: boolean
