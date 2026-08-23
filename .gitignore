@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Env & secrets
+.env
+*.key
+
+# Databases
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+dist/
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# Tunnels / local tooling
+.ngrok*
