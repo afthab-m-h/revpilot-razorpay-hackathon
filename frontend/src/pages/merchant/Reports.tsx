@@ -63,7 +63,7 @@ async function buildRows(dataset: Dataset): Promise<ReportRow[]> {
       status: o.status,
     }))
     for (const f of offers) {
-      rows.push({ kind: `OFFER · ${f.status}`, title: f.name, confidence_percent: f.discount_value, detail: f.reason ?? '', status: f.approval_status ?? f.policy_status ?? '' })
+      rows.push({ kind: `OFFER · ${f.status}`, title: f.name, discount_percent: f.discount_value, detail: f.reason ?? '', status: f.approval_status ?? f.policy_status ?? '' })
     }
     return rows
   }

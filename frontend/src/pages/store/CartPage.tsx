@@ -86,6 +86,7 @@ export default function CartPage() {
         <CheckoutModal
           checkout={checkout}
           onClose={() => setCheckout(null)}
+          onPaid={clearCart}
           onDone={(o: Order) => { clearCart(); nav('/store/orders') }}
         />
       )}

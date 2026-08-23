@@ -8,10 +8,12 @@ export default function CheckoutModal({
   checkout,
   onClose,
   onDone,
+  onPaid,
 }: {
   checkout: CheckoutResponse
   onClose: () => void
   onDone: (order: Order) => void
+  onPaid?: () => void
 }) {
   const [phase, setPhase] = useState<Phase>('gateway')
   const [error, setError] = useState<string | null>(null)
@@ -26,6 +28,7 @@ export default function CheckoutModal({
       })
       if (res.status === 'paid') {
         setPhase('paid')
+        onPaid?.()
       } else {
         setPhase('failed')
       }

@@ -28,11 +28,12 @@ def _price_cart(db: Session, items, offer: Offer | None):
     discount = 0
     if offer and offer.status in ("approved", "active"):
         bundle_price = offer.bundle_price
-        if bundle_price and len(rows) >= 2:
+        cart_ids = {pid for pid, _, _ in rows}
+        covered = set(offer.applies_to_product_ids or [])
+        # Offer only applies when every product it covers is in THIS cart
+        if bundle_price and len(rows) >= 2 and covered and covered.issubset(cart_ids):
             original_bundle = sum(price for _, _, price in rows)
             if original_bundle > bundle_price:
-                discount = min(original_bundle - bundle_price, original_bundle - 1) // 1
-                # apply proportional discount across items
                 ratio = (original_bundle - bundle_price) / original_bundle
                 discount = int(original_bundle * ratio)
     return total, discount, rows
