@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #faf9f6;
+  --surface: #ffffff;
+  --ink: #0a0a0a;
+  --ink-mute: #6b6b6b;
+  --line: #e5e2da;
+  --accent: #d4a900;
+  --accent-soft: rgba(212, 169, 0, 0.12);
+}
+
+.dark {
+  --paper: #060607;
+  --surface: #0d0d10;
+  --ink: #f2f1ec;
+  --ink-mute: #8b8b90;
+  --line: #232329;
+  --accent: #0000ff;
+  --accent-soft: rgba(0, 0, 255, 0.14);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-feature-settings: 'ss01', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+.label {
+  @apply font-mono text-[11px] uppercase tracking-[0.18em] text-inkMute;
+}
+
+.card {
+  @apply bg-surface border border-line transition-colors duration-300;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold
+    bg-accent text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98]
+    disabled:opacity-40 disabled:pointer-events-none;
+}
+
+.dark .btn-primary {
+  color: #fff;
+}
+.light .btn-primary,
+html:not(.dark) .btn-primary {
+  color: #0a0a0a;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium
+    border border-line text-ink transition-all duration-200 hover:border-ink
+    active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none;
+}
+
+.input {
+  @apply w-full bg-surface border border-line px-4 py-2.5 text-sm text-ink
+    placeholder:text-inkMute focus:outline-none focus:border-accent transition-colors;
+}
