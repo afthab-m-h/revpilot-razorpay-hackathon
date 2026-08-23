@@ -1,11 +1,49 @@
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../lib/api'
-import type { ChatResponse } from '../types'
+import type { ChatResponse, GeminiUsage } from '../types'
 
 interface Msg {
   role: 'user' | 'agent'
   content: string
   trace?: string[]
+}
+
+function UsageIndicator({ usage }: { usage: GeminiUsage | null }) {
+  const [remainingSecs, setRemainingSecs] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!usage?.reset_in_seconds) {
+      setRemainingSecs(null)
+      return
+    }
+    setRemainingSecs(Math.ceil(usage.reset_in_seconds))
+    const t = setInterval(() => {
+      setRemainingSecs((s) => (s === null ? null : Math.max(s - 1, 0)))
+    }, 1000)
+    return () => clearInterval(t)
+  }, [usage?.reset_at])
+
+  if (!usage?.visible) return null
+
+  let text: string
+  if (usage.requests_limit != null) {
+    text = `AI usage: ${usage.requests_used}/${usage.requests_limit}`
+    if (usage.limited) {
+      text += remainingSecs && remainingSecs > 0
+        ? ` · resets in ${remainingSecs}s`
+        : ' · Rate limit active'
+    }
+  } else {
+    text = 'Rate limit active'
+  }
+
+  return (
+    <p className={`px-5 py-2 border-t border-line font-mono text-[10px] uppercase tracking-[0.16em] ${
+      usage.limited ? 'text-accent' : 'text-inkMute'
+    }`}>
+      {text}
+    </p>
+  )
 }
 
 export default function ChatPanel({ onRecommend }: { onRecommend?: (productName: string) => void }) {
@@ -18,7 +56,17 @@ export default function ChatPanel({ onRecommend }: { onRecommend?: (productName:
   ])
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
+  const [usage, setUsage] = useState<GeminiUsage | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  const fetchUsage = () =>
+    api.get<GeminiUsage>('/api/agent/usage').then(setUsage).catch(() => setUsage(null))
+
+  useEffect(() => {
+    fetchUsage()
+    const t = setInterval(fetchUsage, 15000) // keeps status fresh; server decides visibility
+    return () => clearInterval(t)
+  }, [])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
@@ -38,8 +86,10 @@ export default function ChatPanel({ onRecommend }: { onRecommend?: (productName:
       ])
       const mentioned = ['Speed Pro', 'Run Lite', 'Socks', 'Gel', 'Watch'].find((n) => res.reply.includes(n))
       if (mentioned) onRecommend?.(mentioned)
+      fetchUsage()
     } catch (e) {
       setMessages((m) => [...m, { role: 'agent', content: `Something went wrong: ${(e as Error).message}` }])
+      fetchUsage()
     } finally {
       setBusy(false)
     }
@@ -100,15 +150,18 @@ export default function ChatPanel({ onRecommend }: { onRecommend?: (productName:
 
       <form
         onSubmit={(e) => { e.preventDefault(); send(input) }}
-        className="p-4 border-t border-line flex gap-2"
+        className="border-t border-line"
       >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="e.g. half marathon under ₹5000"
-          className="input"
-        />
-        <button className="btn-primary shrink-0" disabled={busy || !input.trim()}>Send</button>
+        <UsageIndicator usage={usage} />
+        <div className="p-4 flex gap-2">
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="e.g. half marathon under ₹5000"
+            className="input"
+          />
+          <button className="btn-primary shrink-0" disabled={busy || !input.trim()}>Send</button>
+        </div>
       </form>
     </div>
   )

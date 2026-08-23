@@ -112,6 +112,17 @@ export interface AgentRun {
   created_at: string
 }
 
+export interface GeminiUsage {
+  visible: boolean
+  requests_used: number | null
+  requests_limit: number | null
+  requests_remaining: number | null
+  limited: boolean
+  reset_in_seconds: number | null
+  reset_at: number | null
+  model_configured?: boolean
+}
+
 export const rupees = (paise: number) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paise / 100)
 

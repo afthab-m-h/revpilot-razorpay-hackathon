@@ -3,6 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.config import get_settings
 from app.db.session import get_db
 from app.models.models import AgentRun, Recommendation, log_audit
 from app.schemas.schemas import ChatRequest, OfferPreviewIn
@@ -26,6 +27,19 @@ def revenue_agent(payload: dict, db: Session = Depends(get_db)):
     """Merchant-facing revenue agent (e.g. 'Analyze my store')."""
     message = payload.get("message") or "Analyze my store and find revenue opportunities."
     return run_agent(db, agent_type="revenue_agent", user_message=message)
+
+
+@router.get("/usage")
+def usage_status():
+    """Safe Gemini usage snapshot for the current app instance.
+
+    Never includes API key material. reset_in_seconds is present ONLY when the
+    provider actually reported a retry delay.
+    """
+    from app.services.gemini_usage import gemini_usage
+    out = gemini_usage.status()
+    out["model_configured"] = bool(get_settings().gemini_api_key)
+    return out
 
 
 @router.post("/offers/preview")

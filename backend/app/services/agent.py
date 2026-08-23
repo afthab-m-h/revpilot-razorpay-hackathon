@@ -9,6 +9,7 @@ Design rules:
 """
 
 import json
+import re
 import uuid
 
 import google.generativeai as genai
@@ -16,6 +17,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.models.models import AgentRun
+from app.services.gemini_usage import gemini_usage, parse_quota_error
 from app.tools import analytics_tools, catalog_tools, commerce_tools
 
 
@@ -216,6 +218,17 @@ def run_agent(db: Session, *, agent_type: str, user_message: str,
         _persist_run(db, session_id, agent_type, user_message, reply, tools_used, trace)
         return {"session_id": session_id, "reply": reply, "trace": trace.steps}
 
+    # Known-active rate limit (server gave a retry time): skip the LLM entirely
+    # and serve the deterministic fallback until it clears.
+    if gemini_usage.should_skip():
+        trace.add("Gemini rate limit active — using deterministic fallback")
+        fb_reply, tools_used = _fallback_flow(db, agent_type, user_message, trace)
+        reply = ("The AI assistant is rate-limited right now, so here's a quick "
+                 "data-driven answer instead:\n\n" + fb_reply)
+        _persist_run(db, session_id, agent_type, user_message, reply, tools_used, trace)
+        return {"session_id": session_id, "reply": reply,
+                "trace": trace.steps, "rate_limited": True}
+
     _configure_llm()
     settings = get_settings()
     system_prompt = REVENUE_SYSTEM_PROMPT if agent_type == "revenue_agent" else SHOPPING_SYSTEM_PROMPT
@@ -233,9 +246,14 @@ def run_agent(db: Session, *, agent_type: str, user_message: str,
     contents.append({"role": "user", "parts": [{"text": user_message}]})
 
     tools_used: list[str] = []
+    rate_limited = False
     try:
+        def _send(text):
+            gemini_usage.record_request()
+            return chat.send_message(text)
+
         chat = model.start_chat(history=contents[:-1])
-        response = chat.send_message(contents[-1]["parts"][0]["text"])
+        response = _send(contents[-1]["parts"][0]["text"])
 
         for _ in range(6):  # bounded tool loop
             candidate = response.candidates[0] if response.candidates else None
@@ -256,16 +274,30 @@ def run_agent(db: Session, *, agent_type: str, user_message: str,
                 parts.append({
                     "function_response": {"name": call.name, "response": _safe_json(result)}
                 })
-            response = chat.send_message({"role": "user", "parts": parts})
+            response = _send({"role": "user", "parts": parts})
 
         reply = response.text if response.candidates else "I could not complete that request."
+        gemini_usage.record_success()
     except Exception as exc:  # LLM outage must not break commerce
-        reply = (f"The AI assistant is temporarily unavailable ({exc.__class__.__name__}). "
-                 f"You can still browse and buy normally.")
-        trace.add("LLM error — degraded to non-AI mode")
+        type_name = exc.__class__.__name__
+        text = str(exc)
+        is_quota = type_name == "ResourceExhausted" or "RESOURCE_EXHAUSTED" in text or "429" in text
+        if is_quota:
+            retry_seconds, limit = parse_quota_error(text)
+            gemini_usage.record_rate_limited(retry_seconds, limit, reason=type_name)
+            rate_limited = True
+            trace.add("Gemini rate limit hit — switching to deterministic fallback")
+            fb_reply, _fb_tools = _fallback_flow(db, agent_type, user_message, trace)
+            reply = ("The AI assistant has hit its usage limit, so here's a quick "
+                     "data-driven answer instead:\n\n" + fb_reply)
+        else:
+            reply = (f"The AI assistant is temporarily unavailable ({type_name}). "
+                     f"You can still browse and buy normally.")
+            trace.add("LLM error — degraded to non-AI mode")
 
     _persist_run(db, session_id, agent_type, user_message, reply, tools_used, trace)
-    return {"session_id": session_id, "reply": reply, "trace": trace.steps}
+    return {"session_id": session_id, "reply": reply,
+            "trace": trace.steps, **({"rate_limited": True} if rate_limited else {})}
 
 
 def _summarize_tool_result(name: str, result: dict) -> str:
