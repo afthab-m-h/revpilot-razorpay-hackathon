@@ -35,6 +35,23 @@ def _configure_llm() -> None:
     genai.configure(api_key=get_settings().gemini_api_key)
 
 
+def _plain(value):
+    """Recursively convert protobuf containers (MapComposite/RepeatedComposite)
+    into plain Python types so tool args/results stay JSON-serializable."""
+    if isinstance(value, dict):
+        return {k: _plain(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_plain(v) for v in value]
+    if isinstance(value, (str, bool, int, float)) or value is None:
+        return value
+    if hasattr(value, "items"):
+        return {k: _plain(v) for k, v in value.items()}
+    try:
+        return [_plain(v) for v in value]
+    except TypeError:
+        return value
+
+
 # ------------------------------------------------------------- tool schemas --
 
 SHOPPING_TOOLS = [
@@ -230,7 +247,9 @@ def run_agent(db: Session, *, agent_type: str, user_message: str,
             parts = []
             for call in calls:
                 tools_used.append(call.name)
-                args = {k: v for k, v in (call.args or {}).items()}
+                # Normalize protobuf containers -> plain Python types so tool
+                # results and audit entries stay JSON-serializable.
+                args = _plain(dict(call.args or {}))
                 trace.add(f"Calling tool {call.name}")
                 result = _dispatch(db, call.name, args)
                 trace.add(_summarize_tool_result(call.name, result))
@@ -280,10 +299,13 @@ def _safe_json(obj) -> dict:
 
 def _persist_run(db: Session, session_id: str, agent_type: str, user_message: str,
                  reply: str, tools_used: list[str], trace: AgentTrace) -> None:
-    db.add(AgentRun(id=f"run_{session_id}", session_id=session_id, agent_type=agent_type,
-                    input=user_message, output=reply, tools_used=tools_used,
-                    trace=trace.steps))
-    db.commit()
+    try:
+        db.add(AgentRun(id=f"run_{session_id}", session_id=session_id, agent_type=agent_type,
+                        input=user_message, output=reply, tools_used=tools_used,
+                        trace=trace.steps))
+        db.commit()
+    except Exception:
+        db.rollback()  # never let logging poison the request session
 
 
 # ------------------------------------------------------------ fallback mode --

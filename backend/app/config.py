@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     webhook_secret: str = ""
 
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-1.5-flash"
+    gemini_model: str = "gemini-3.5-flash"
 
     database_url: str = "sqlite:///./revpilot.db"
     frontend_origin: str = "http://localhost:5173"
