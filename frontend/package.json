@@ -9,10 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "docx": "^9.7.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0",
-    "recharts": "^2.13.3"
+    "recharts": "^2.13.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",

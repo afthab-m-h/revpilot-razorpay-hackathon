@@ -101,6 +101,17 @@ export interface CrossSellItem {
   reason: string
 }
 
+export interface AgentRun {
+  id: string
+  session_id: string
+  agent_type: string
+  input: string | null
+  output: string | null
+  tools_used: string[]
+  trace: { message: string }[] | string[]
+  created_at: string
+}
+
 export const rupees = (paise: number) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paise / 100)
 

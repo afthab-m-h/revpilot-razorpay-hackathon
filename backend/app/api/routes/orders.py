@@ -108,10 +108,13 @@ def get_order(order_id: str, db: Session = Depends(get_db)):
 
 
 @router.get("")
-def list_orders(status: str | None = None, limit: int = 25, db: Session = Depends(get_db)):
+def list_orders(status: str | None = None, customer_id: str | None = None,
+                limit: int = 25, db: Session = Depends(get_db)):
     q = db.query(Order).order_by(Order.created_at.desc())
     if status:
         q = q.filter(Order.status == status)
+    if customer_id:
+        q = q.filter(Order.customer_id == customer_id)
     orders = q.limit(limit).all()
 
     def with_items(o: Order):
