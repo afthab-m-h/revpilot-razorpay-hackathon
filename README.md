@@ -2,77 +2,66 @@
 
 # REVPILOT
 
-### AI Revenue Agent for Merchants
+### AI Agents That Grow Merchant Revenue
 
-*Agentic commerce that grows merchant revenue — with every money action bounded, gated and auditable.*
+*Bounded. Gated. Auditable.*
 
-**Built for the Razorpay Hackathon · simulated payments only**
+<img src="https://img.shields.io/badge/Python-3.12-4A90D9?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+<img src="https://img.shields.io/badge/FastAPI-Backend-0E8C7F?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+<img src="https://img.shields.io/badge/React_18-TypeScript-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React TypeScript" />
+<img src="https://img.shields.io/badge/TailwindCSS-Styling-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+<img src="https://img.shields.io/badge/Gemini-AI_Agents-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini" />
+<img src="https://img.shields.io/badge/Razorpay-Test_Mode_Integration-3395FF?style=for-the-badge&logo=razorpay&logoColor=white" alt="Razorpay Test Mode" />
+<img src="https://img.shields.io/badge/SQLite-SQLAlchemy-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
+
+**Built for the Razorpay hackathon · all payments are simulated/test — no live payments**
 
 </div>
 
 ---
 
-## The Problem
+RevPilot is an AI revenue and agentic-commerce platform for merchants, built around two connected experiences. **Customers** shop through an AI agent that understands intent and recommends products backed by real purchase data, then check out through a simulated gateway where success *and* failure are handled properly. **Merchants** run the store from a console where AI-detected opportunities become offers only after passing a policy engine and receiving explicit human approval — and every step lands in a complete audit trail.
 
-Merchants sit on customer data, product data and payment infrastructure — but turning that into revenue still takes manual analysis and manual intervention.
-
-## The Solution
-
-RevPilot runs two AI agents on top of a live commerce backend:
-
-- A **shopping agent** that understands intent ("half marathon shoes under ₹5,000"), searches the catalog with tools, and recommends products backed by real co-purchase data.
-- A **revenue agent** that scans order history, detects opportunities, and proposes offers — which the **policy engine validates** and the **merchant approves** before anything executes.
+## Core Flow
 
 ```
-Observe → Reason → Propose → Gate → Act → Verify → Learn
+DATA → INTELLIGENCE → OPPORTUNITY → AI DECISION → MERCHANT APPROVAL → COMMERCE → PAYMENT → AUDIT
 ```
 
-## Key Capabilities
+## Two Roles, One Platform
 
-| | |
-|---|---|
-| 🛍 **AI shopping agent** | Gemini tool-calling over a live catalog — visible activity trace, markdown answers |
-| 📊 **Deterministic intelligence** | Cross-sell affinities, cart-abandonment and low-conversion detection computed from real order history — never hallucinated |
-| 🔒 **Policy engine** | Max order value ₹10,000 · max discount 20% · product & stock checks · violations blocked *and* audited |
-| ✅ **Human-in-the-loop** | AI proposals stay `proposed` until the merchant explicitly approves them |
-| 💳 **Payment abstraction** | `MockPaymentProvider` sandbox by default; Razorpay Test Mode fully implemented behind the same interface |
-| 🧾 **Complete audit trail** | Every proposal, policy check, approval, payment event and webhook — actor, reason, status |
-| 📄 **Report exports** | Sales / inventory / opportunities / audit as CSV, XLSX, PDF, DOCX |
+| 🛍 Customer | 📈 Merchant |
+| :--- | :--- |
+| Product catalog with search & categories | Revenue dashboard (revenue · AOV · conversion · funnel) |
+| AI shopping agent with visible tool-calling trace | Product & stock management (add / edit / delete) |
+| Cross-sell recommendations from real co-purchase data | AI revenue opportunities with explainable reasoning |
+| Cart with server-side pricing | Approval workflow — policy-checked offer proposals |
+| Simulated checkout with success **and** failure handling | Report exports: CSV · XLSX · PDF · DOCX |
+| Order history incl. failed-payment states | Complete financial audit trail & agent activity log |
 
-## Demo
+## Demo & Screenshots
 
-> **Placeholder — demo video link will be added here.**
+> Screenshots and demo GIFs will be added here after capture.
 
-Quick self-guided tour once running:
+| # | Asset | Status |
+| :--- | :--- | :--- |
+| 1 | Landing page (role selection) | *placeholder* |
+| 2 | Customer store + AI agent chat | *placeholder* |
+| 3 | Checkout / simulated payment failure | *placeholder* |
+| 4 | Merchant dashboard | *placeholder* |
+| 5 | AI opportunity review / policy block | *placeholder* |
+| 6 | Audit trail | *placeholder* |
 
-1. Pick **CUSTOMER** → ask *"I need running shoes for a half marathon under ₹5000"* → watch the tool trace
-2. Add to cart → Checkout → **Pay now** → order `paid`, stock decremented, revenue recorded
-3. Repeat with **Simulate failure** → order stays unfulfilled, failure audited
-4. Pick **MERCHANT** → AI Opportunities → Review → *"Try 30%"* → **blocked by policy**
-5. Approve a compliant 6% bundle → export an **Audit report**
+## Why This Fits Track 01
 
-## Screenshots
-
-> **Placeholder — screenshots will be added here.**
-
-<!-- customer store · AI chat · checkout · merchant overview · opportunity review · policy block · audit trail -->
-
-## Customer Journey
-
-```
-Browse catalog ──► AI assistance (intent + budget) ──► Product detail
-      ──► cross-sell suggestions ──► Cart ──► Checkout
-      ──► Simulated payment ──► Success (order paid) / Failure (not fulfilled)
-      ──► Order history
-```
-
-## Merchant Journey
-
-```
-Dashboard (revenue · AOV · conversion · funnel) ──► Manage products & stock
-      ──► Review AI opportunities ──► Propose offer ──► Policy gate
-      ──► Approve / Reject ──► Track sales ──► Export reports ──► Audit everything
-```
+| Track requirement | RevPilot implementation |
+| :--- | :--- |
+| Conversational in-app checkout | Shopping agent chat drives discovery straight into the cart and sandbox checkout modal |
+| Agent-readable catalog | Structured product API (`search_products`, `get_product_details`) is what the agent actually calls |
+| Upsell / cross-sell | Co-purchase matrix P(B\|A) computed over paid orders surfaces affinity-ranked add-ons |
+| Revenue opportunities | Analytics engine detects cross-sell bundles, cart abandonment, low-conversion products |
+| Campaign / offer orchestration | Opportunities become policy-checked offer proposals; merchants approve or reject them in-console |
+| Explainable, bounded, gated money actions | Every proposal carries reason + confidence; the policy engine bounds discounts/orders and gates execution behind merchant approval — all audited |
 
 ## Architecture
 
@@ -99,7 +88,7 @@ Commerce Tools ────► Payment Provider Abstraction
                         Signed webhooks ──► SQLite ──► Audit log
 ```
 
-## Safety & Policy Model
+## Safety Model
 
 The LLM never touches money directly:
 
@@ -109,7 +98,8 @@ Gemini → picks TOOLS only → commerce tools → POLICY ENGINE → PaymentProv
 
 - Tool declarations expose **read-only** catalog/analytics tools plus `create_offer_proposal` — there is no path from model output to a payment API
 - All pricing math is deterministic Python; the model never invents amounts
-- Policy violations return `BLOCKED` with a human-readable reason and an audit entry — nothing is silently clamped
+- Policy engine enforces: max order value ₹10,000 · max discount 20% · product existence · stock availability
+- Violations return `BLOCKED` with a human-readable reason and an audit entry — nothing is silently clamped
 - Policy is **re-evaluated at approval time**, invalidating stale proposals
 - Server-side cart pricing: client totals are never trusted
 - Webhook signatures are verified before any state changes; failed payments leave orders unfulfilled with no revenue recorded
@@ -119,7 +109,7 @@ Gemini → picks TOOLS only → commerce tools → POLICY ENGINE → PaymentProv
 Deliberate, demoable failures:
 
 | Scenario | What happens |
-|---|---|
+| :--- | :--- |
 | Agent proposes 30% off | `BLOCKED: Discount 30.00% vs max allowed 20%` — audited, nothing executed |
 | Payment fails at gateway | Order → `payment_failed`, stays unfulfilled, failure recorded via verified webhook |
 | LLM outage or quota exhausted | Deterministic catalog-backed fallback answers; usage tracked and surfaced honestly (`AI QUOTA · 20/20 · RATE LIMITED · RETRY IN 42s`) without invented numbers |
@@ -127,7 +117,7 @@ Deliberate, demoable failures:
 ## Tech Stack
 
 | Layer | Tools |
-|---|---|
+| :--- | :--- |
 | Frontend | React 18 · TypeScript · Vite · Tailwind CSS · Recharts · react-markdown |
 | Reports | SheetJS · jsPDF · docx (generated client-side from live API data) |
 | Backend | Python 3.12 · FastAPI · SQLAlchemy 2 · Pydantic v2 |
@@ -135,7 +125,7 @@ Deliberate, demoable failures:
 | AI | Google Gemini function calling with deterministic fallback |
 | Database | SQLite via SQLAlchemy (`DATABASE_URL` swappable for PostgreSQL) |
 
-## Setup
+## Quick Start
 
 ```powershell
 git clone https://github.com/afthab-m-h/revpilot-razorpay-hackathon.git
@@ -163,17 +153,18 @@ cd ..
 
 ## Environment Variables
 
-All configuration lives in `backend/.env` (see `.env.example`). **No secret ever leaves the backend.**
+All configuration lives in `backend/.env` (see [`.env.example`](backend/.env.example)). No secret ever leaves the backend.
 
-| Variable | Purpose | Default |
-|---|---|---|
-| `PAYMENT_PROVIDER` | `mock` (default) or `razorpay` | `mock` |
-| `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` | Razorpay **Test Mode** keys — only for provider = `razorpay` | — |
-| `WEBHOOK_SECRET` | Razorpay webhook signing secret | — |
-| `MOCK_PAYMENT_SECRET` | HMAC secret for mock gateway signatures | dev default |
-| `GEMINI_API_KEY` | Google AI Studio key — empty ⇒ deterministic fallback mode | empty |
-| `GEMINI_MODEL` | Model id | `gemini-3.5-flash` |
-| `DATABASE_URL` | SQLAlchemy connection URL | SQLite file |
+| Variable | Purpose |
+| :--- | :--- |
+| `PAYMENT_PROVIDER` | `mock` by default; `razorpay` enables Razorpay Test Mode |
+| `RAZORPAY_KEY_ID` | Razorpay Test Mode key ID; only needed for the Razorpay provider |
+| `RAZORPAY_KEY_SECRET` | Razorpay Test Mode secret; only needed for the Razorpay provider |
+| `WEBHOOK_SECRET` | Razorpay webhook signing secret |
+| `MOCK_PAYMENT_SECRET` | Mock gateway HMAC secret |
+| `GEMINI_API_KEY` | Optional; enables the Gemini agent layer, otherwise deterministic fallback |
+| `GEMINI_MODEL` | Gemini model ID |
+| `DATABASE_URL` | SQLAlchemy database URL; SQLite by default |
 
 ## API Surface
 
@@ -209,11 +200,11 @@ revpilot/
 └── README.md
 ```
 
-> Note: the SQLite database lives in `backend/` at runtime and is gitignored.
+> The SQLite database lives in `backend/` at runtime and is gitignored.
 
 ## Honest Labels
 
-All orders, metrics and payments in this project are **simulated/test data** and labelled as such in the UI and every generated report.
+All orders, metrics and payments in this project are **simulated/test data**, labelled as such in the UI and every generated report. Razorpay integration runs against Test Mode APIs only.
 
 ## Future Improvements
 
