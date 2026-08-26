@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { api } from '../lib/api'
 import type { ChatResponse, GeminiUsage } from '../types'
 
@@ -6,6 +8,69 @@ interface Msg {
   role: 'user' | 'agent'
   content: string
   trace?: string[]
+}
+
+/* ---------- lightweight shopping-domain guardrail (frontend-only) ---------- */
+
+const SHOPPING_RE =
+  /\b(sho(e|es)|sneaker|sock|watch|bottle|gel|short|sleeve|roller|gear|apparel|clothing|product|catalog(ue)?|stock|price|priced|discount|offer|bundle|deal|sale|cart|checkout|order|orders|buy|purchas\w*|return|refund|exchange|shipping|delivery|policy|warranty|size|sizing|recommend\w*|running|run|marathon|half.marathon|racing|trainer|training|fitness|gym|workout|yoga|sport\w*|athlet\w*|nutrition|recover\w*|hydrat\w*|compress\w*|gps|budget|afford|rupee|rs\b|inr|₹|\d+\s*(k|k? rupees))\b/i
+
+const GREETING_RE = /^\s*(hi|hii+|hey+|hello+|yo|good\s*(morning|afternoon|evening)|namaste)[!. ]*$/i
+
+function isShoppingRelated(text: string): boolean {
+  if (GREETING_RE.test(text)) return true          // greetings pass through to the agent
+  return SHOPPING_RE.test(text)
+}
+
+const REDIRECT_MSG =
+  "I'm your StrideX shopping assistant — I can help you find running and fitness gear, compare products, check prices, build bundles, and complete your checkout.\n\nWhat are you training for?"
+
+/* ------------------------------ markdown view ------------------------------ */
+
+const mdClass = {
+  p: 'my-2 first:mt-0 last:mb-0',
+  h1: 'font-display font-semibold text-base mt-3 mb-1.5',
+  h2: 'font-display font-semibold text-[15px] mt-3 mb-1.5',
+  h3: 'font-display font-semibold text-sm mt-3 mb-1',
+  ul: 'list-disc pl-5 my-2 space-y-1',
+  ol: 'list-decimal pl-5 my-2 space-y-1',
+  li: 'leading-relaxed',
+  strong: 'font-semibold text-ink',
+  a: 'text-accent underline',
+}
+
+export function Markdown({ content }: { content: string }) {
+  return (
+    <div className="text-sm leading-relaxed [&_code]:font-mono [&_code]:text-[12px]">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          p: ({ children }) => <p className={mdClass.p}>{children}</p>,
+          h1: ({ children }) => <h1 className={mdClass.h1}>{children}</h1>,
+          h2: ({ children }) => <h2 className={mdClass.h2}>{children}</h2>,
+          h3: ({ children }) => <h3 className={mdClass.h3}>{children}</h3>,
+          h4: ({ children }) => <h4 className={mdClass.h3}>{children}</h4>,
+          ul: ({ children }) => <ul className={mdClass.ul}>{children}</ul>,
+          ol: ({ children }) => <ol className={mdClass.ol}>{children}</ol>,
+          li: ({ children }) => <li className={mdClass.li}>{children}</li>,
+          strong: ({ children }) => <strong className={mdClass.strong}>{children}</strong>,
+          a: ({ children, href }) => <a href={href} className={mdClass.a}>{children}</a>,
+          blockquote: ({ children }) => (
+            <blockquote className="border-l-2 border-line pl-3 my-2 text-inkMute">{children}</blockquote>
+          ),
+          code: ({ className, children, ...props }) => {
+            const isBlock = /language-/.test(className || '')
+            if (isBlock) return <code className="block bg-paper border border-line p-3 my-2 whitespace-pre-wrap" {...props}>{children}</code>
+            return <code className="bg-paper border border-line px-1 py-0.5" {...props}>{children}</code>
+          },
+          pre: ({ children }) => <pre className="my-2 overflow-x-auto">{children}</pre>,
+          hr: () => <hr className="border-line my-3" />,
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  )
 }
 
 function UsageIndicator({ usage }: { usage: GeminiUsage | null }) {
@@ -83,6 +148,14 @@ export default function ChatPanel({ onRecommend }: { onRecommend?: (productName:
     if (!clean || busy) return
     setInput('')
     setMessages((m) => [...m, { role: 'user', content: clean }])
+
+    // Shopping-domain guardrail: politely redirect off-topic requests without
+    // calling the agent (no tool-calling or recommendation logic is changed).
+    if (!isShoppingRelated(clean)) {
+      setMessages((m) => [...m, { role: 'agent', content: REDIRECT_MSG }])
+      return
+    }
+
     setBusy(true)
     try {
       const res = await api.post<ChatResponse>('/api/agent/chat', { message: clean })
@@ -119,13 +192,13 @@ export default function ChatPanel({ onRecommend }: { onRecommend?: (productName:
           <div key={i} className={`animate-fadeUp ${m.role === 'user' ? 'pl-10' : ''}`}>
             <p className="label mb-1.5">{m.role === 'user' ? 'You' : 'Agent'}</p>
             <div
-              className={`text-sm leading-relaxed whitespace-pre-wrap ${
+              className={`${
                 m.role === 'user'
-                  ? 'border-l-2 border-accent pl-4 text-ink'
-                  : 'border-l-2 border-line pl-4 text-inkMute'
+                  ? 'border-l-2 border-accent pl-4 text-sm leading-relaxed text-ink whitespace-pre-wrap'
+                  : 'border-l-2 border-line pl-4 [&_p]:text-inkMute [&_li]:text-inkMute [&_h1]:text-ink [&_h2]:text-ink [&_h3]:text-ink'
               }`}
             >
-              {m.content}
+              {m.role === 'user' ? m.content : <Markdown content={m.content} />}
             </div>
             {m.trace && m.trace.length > 0 && (
               <details className="mt-2 ml-4 group">
