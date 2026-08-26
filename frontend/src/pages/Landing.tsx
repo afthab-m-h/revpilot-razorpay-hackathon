@@ -47,15 +47,13 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Role cards */}
-      <section className="grid md:grid-cols-2 gap-6 pb-28">
+      {/* Role cards - identical dimensions, top-aligned */}
+      <section className="grid md:grid-cols-2 gap-6 pb-28 items-stretch">
         {roles.map((r, i) => (
           <Link
             key={r.to}
             to={r.to}
-            className={`card group p-8 md:p-12 flex flex-col min-h-[420px] transition-all duration-300 hover:border-accent animate-fadeUp ${
-              i === 1 ? 'md:mt-14' : ''
-            }`}
+            className={`card group p-8 md:p-12 flex flex-col h-full min-h-[420px] transition-all duration-300 hover:border-accent animate-fadeUp`}
             style={{ animationDelay: `${i * 120}ms` }}
           >
             <div className="flex items-start justify-between">
