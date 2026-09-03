@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/revpilot-logo.png" alt="RevPilot logo" width="180" />
+
 # REVPILOT
 
 ### AI Agents That Grow Merchant Revenue
@@ -40,6 +42,8 @@ DATA → INTELLIGENCE → OPPORTUNITY → AI DECISION → MERCHANT APPROVAL → 
 | Order history incl. failed-payment states | Complete financial audit trail & agent activity log |
 
 ## Demo & Screenshots
+
+Watch the full product walkthrough: [▶ RevPilot demo video](assets/RevPilot.mp4)
 
 > Screenshots and demo GIFs will be added here after capture.
 
