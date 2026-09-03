@@ -2,8 +2,6 @@
 
 <img src="assets/revpilot-logo.png" alt="RevPilot logo" width="180" />
 
-# REVPILOT
-
 ### AI Agents That Grow Merchant Revenue
 
 *Bounded. Gated. Auditable.*
