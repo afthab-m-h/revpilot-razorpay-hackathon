@@ -41,9 +41,11 @@ DATA → INTELLIGENCE → OPPORTUNITY → AI DECISION → MERCHANT APPROVAL → 
 
 ## Demo & Screenshots
 
-[![Watch the RevPilot demo](https://img.youtube.com/vi/1y0kQhWMdDg/maxresdefault.jpg)](https://youtu.be/1y0kQhWMdDg)
+<a href="https://youtu.be/1y0kQhWMdDg" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.youtube.com/vi/1y0kQhWMdDg/maxresdefault.jpg" alt="Watch the RevPilot demo" />
+</a>
 
-▶ [Watch the full RevPilot product walkthrough on YouTube](https://youtu.be/1y0kQhWMdDg)
+▶ <a href="https://youtu.be/1y0kQhWMdDg" target="_blank" rel="noopener noreferrer">Watch the full RevPilot product walkthrough on YouTube</a>
 
 ### Screenshots
 
