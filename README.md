@@ -59,31 +59,37 @@ DATA → INTELLIGENCE → OPPORTUNITY → AI DECISION → MERCHANT APPROVAL → 
   <img src="assets/Customer%20store%20%2B%20AI%20agent%20chat.png" alt="Customer store and AI shopping agent" width="820" />
 </p>
 
-#### 03 — Explore merchant performance
-
-<p align="center">
-  <img src="assets/Merchant%20dashboard%201.png" alt="Merchant revenue dashboard" width="820" />
-</p>
-
-#### 04 — Review revenue analytics
-
-<p align="center">
-  <img src="assets/Merchant%20dashboard%202.png" alt="Merchant dashboard analytics" width="820" />
-</p>
-
-#### 05 — Approve AI opportunities within policy
-
-<p align="center">
-  <img src="assets/AI%20opportunity%20review%20%20policy%20block.png" alt="AI opportunity review and policy block" width="820" />
-</p>
-
-#### 06 — Handle payment failures safely
+#### 03 — Review your cart and checkout
 
 <p align="center">
   <img src="assets/Checkout%20%20simulated%20payment%20failure.png" alt="Simulated payment failure at checkout" width="820" />
 </p>
 
-#### 07 — Maintain a complete audit trail
+#### 04 — Handle payment failures safely
+
+<p align="center">
+  <img src="assets/payment%20failure.png" alt="Sandbox checkout payment failure state" width="820" />
+</p>
+
+#### 05 — Explore merchant performance
+
+<p align="center">
+  <img src="assets/Merchant%20dashboard%201.png" alt="Merchant revenue dashboard" width="820" />
+</p>
+
+#### 06 — Review revenue analytics
+
+<p align="center">
+  <img src="assets/Merchant%20dashboard%202.png" alt="Merchant dashboard analytics" width="820" />
+</p>
+
+#### 07 — Approve AI opportunities within policy
+
+<p align="center">
+  <img src="assets/AI%20opportunity%20review%20%20policy%20block.png" alt="AI opportunity review and policy block" width="820" />
+</p>
+
+#### 08 — Maintain a complete audit trail
 
 <p align="center">
   <img src="assets/Audit%20trail.png" alt="Audit trail" width="820" />
