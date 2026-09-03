@@ -45,16 +45,23 @@ DATA → INTELLIGENCE → OPPORTUNITY → AI DECISION → MERCHANT APPROVAL → 
 
 ▶ [Watch the full RevPilot product walkthrough on YouTube](https://youtu.be/1y0kQhWMdDg)
 
-> Screenshots and demo GIFs will be added here after capture.
+### Screenshots
 
-| # | Asset | Status |
-| :--- | :--- | :--- |
-| 1 | Landing page (role selection) | *placeholder* |
-| 2 | Customer store + AI agent chat | *placeholder* |
-| 3 | Checkout / simulated payment failure | *placeholder* |
-| 4 | Merchant dashboard | *placeholder* |
-| 5 | AI opportunity review / policy block | *placeholder* |
-| 6 | Audit trail | *placeholder* |
+<p align="center">
+  <img src="assets/Landing%20page%20(role%20selection).png" alt="RevPilot landing page with customer and merchant role selection" width="48%" />
+  <img src="assets/Customer%20store%20%2B%20AI%20agent%20chat.png" alt="Customer store and AI shopping agent" width="48%" />
+</p>
+<p align="center">
+  <img src="assets/Merchant%20dashboard%201.png" alt="Merchant revenue dashboard" width="48%" />
+  <img src="assets/Merchant%20dashboard%202.png" alt="Merchant dashboard analytics" width="48%" />
+</p>
+<p align="center">
+  <img src="assets/AI%20opportunity%20review%20%20policy%20block.png" alt="AI opportunity review and policy block" width="48%" />
+  <img src="assets/Checkout%20%20simulated%20payment%20failure.png" alt="Simulated payment failure at checkout" width="48%" />
+</p>
+<p align="center">
+  <img src="assets/Audit%20trail.png" alt="Audit trail" width="48%" />
+</p>
 
 ## Why This Fits Track 01
 
