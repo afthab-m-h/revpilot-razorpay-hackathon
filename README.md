@@ -67,7 +67,7 @@ DATA → INTELLIGENCE → OPPORTUNITY → AI DECISION → MERCHANT APPROVAL → 
   <img src="assets/Checkout%20%20simulated%20payment%20failure.png" alt="Simulated payment failure at checkout" width="820" />
 </p>
 
-#### 04 — Handle payment failures safely
+#### 04 — Handle payment failures
 
 <p align="center">
   <img src="assets/payment%20failure.png" alt="Sandbox checkout payment failure state" width="820" />
@@ -263,6 +263,6 @@ All orders, metrics and payments in this project are **simulated/test data**, la
 <div align="center">
 
 *RevPilot doesn't give an AI unrestricted access to money.*
-*It gives the agent the ability to act — within explicit policies, merchant approval and a complete audit trail.*
+*It gives the agent the ability to act within explicit policies, merchant approval and a complete audit trail.*
 
 </div>
